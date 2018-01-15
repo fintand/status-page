@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import http from 'http';
 import https from 'https';
 import express from 'express';
@@ -21,12 +23,17 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; // needed for cert error
 let sslStart = null;
 let sslEnd = null;
 
+console.log(process.env.DB_HOST);
+
 const pg = new Knex({
   client: 'pg',
   connection: {
-    database: 'postgres'
+    host: process.env.DB_HOST,
+    database: process.env.DB_DB,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS
   },
-  searchPath: ['url_status'],
+  searchPath: ['status_page'],
 });
 
 function fetchSslCert() {
@@ -69,7 +76,7 @@ function fetchApis() {
   });
 }
 
-// fetchApis();
+fetchApis();
 
 
 
