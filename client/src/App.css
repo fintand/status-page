@@ -43,3 +43,6 @@
 
 .segment a {
   color: #000; }
+
+.container .buttons {
+  float: right; }

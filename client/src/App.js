@@ -4,8 +4,17 @@ import uniqBy from 'lodash/uniqBy';
 import OperationMessage from './components/OperationMessage';
 import SslPopover from './components/SslPopover';
 import SslMessage from './components/SslMessage';
-import { Label, Container, Header, Segment, Icon, Popup, Dimmer, Loader } from 'semantic-ui-react';
+import { Label, Container, Header, Segment, Icon, Popup, Dimmer, Loader, Button } from 'semantic-ui-react';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import moment from 'moment';
+
+const ButtonExampleGroupColored = (props) => (
+  <Button.Group>
+    <Button onClick={() => props.fetch(1)}>Day</Button>
+    <Button onClick={() => props.fetch(7)}>Week</Button>
+    <Button onClick={() => props.fetch(30)}>Month</Button>
+  </Button.Group>
+);
 
 class App extends Component {
 
@@ -105,13 +114,17 @@ class App extends Component {
 
             <h1>System Metrics</h1>
 
-            {this.state.requests && this.state.requests.map(request => (
+            <ButtonExampleGroupColored fetch={this.fetchRequests} />
+            <br/>
+
+
+              {this.state.requests && this.state.requests.map(request => (
               <div key={request.id}>
                 <Header>{request.name}</Header>
                 <LineChart width={730} height={250} data={request.data}
                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" tickFormatter={(str) => '1'} />
+                  <XAxis dataKey="createdOn" tickFormatter={(str) => moment(str).hour() + 'h'} />
                   <YAxis />
                   <Tooltip formatter={(str) => str+'ms'} />
                   <Legend />

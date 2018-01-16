@@ -156,7 +156,7 @@ app.get('/api/requests', (req, res) => {
 
   pg.from('urls')
     .innerJoin('requests', 'urls.id', 'requests.url_id')
-    .orderBy('requests.created_on', 'desc')
+    .orderBy('requests.created_on', 'asc')
     .modify((queryBuilder => {
       if(req.query.id) {
         queryBuilder.where('urls.id', req.query.id);
@@ -169,8 +169,6 @@ app.get('/api/requests', (req, res) => {
         let col = 'requests.created_on';
         queryBuilder.whereRaw('requests.created_on >= ? ::date', date);
         queryBuilder.where(pg.raw(`(SELECT date_part( ? , ${col}) = '00')`, ['minute']))
-
-        // WHERE update_date >= '2013-05-03'::date
       }
     }))
     .then(rsSet => {
