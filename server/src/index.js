@@ -31,7 +31,8 @@ const pg = new Knex({
     host: process.env.DB_HOST,
     database: process.env.DB_DB,
     user: process.env.DB_USER,
-    password: process.env.DB_PASS
+    password: process.env.DB_PASS,
+    port: 5555
   },
   searchPath: ['status_page'],
 });
@@ -165,8 +166,9 @@ app.get('/api/requests', (req, res) => {
         let date = moment().subtract(parseInt(req.query.days),'d').format('YYYY-MM-DD');
         console.log(date);
 
-
+        let col = 'requests.created_on';
         queryBuilder.whereRaw('requests.created_on >= ? ::date', date);
+        queryBuilder.where(pg.raw(`(SELECT date_part( ? , ${col}) = '00')`, ['minute']))
 
         // WHERE update_date >= '2013-05-03'::date
       }
