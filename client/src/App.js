@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import './App.css';
 import uniqBy from 'lodash/uniqBy';
 import OperationMessage from './components/OperationMessage';
+import SslPopover from './components/SslPopover';
+import SslMessage from './components/SslMessage';
 import { Label, Container, Header, Segment, Icon, Popup, Dimmer, Loader } from 'semantic-ui-react';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 class App extends Component {
-
 
   state = {
     urls: [],
@@ -70,34 +71,28 @@ class App extends Component {
               <span> | </span>
               <span>status</span>
             </div>
-            {this.state.ssl && this.state.ssl.from &&
-            <Popup
-              trigger={<Icon name='question circle outline' size='large' />}
-              size='medium'>
-              <Popup.Header>SSL Validation</Popup.Header>
-              <Popup.Content>
-                {this.state.ssl.from} to {this.state.ssl.to}
-              </Popup.Content>
-            </Popup>
-            }
+            <SslPopover ssl={this.state.ssl} />
           </div>
 
           <Container text>
             <br/>
             <br/>
+            <SslMessage ssl={this.state.ssl} />
+            <br/>
             <OperationMessage operationStatus={this.state.operationStatus} />
 
             <Segment.Group>
-              {this.state.urls.map(url =>
-                <Segment key={url.id}><a href={url.url} target='_blank'>{url.name}</a>
-                  <Popup
-                    trigger={<Icon name={(url.isSuccess) ? 'check' : 'x'} size='large' color={(url.isSuccess) ? 'green' : 'red'} />}
-                    content={url.isSuccess ? 'Operational' : 'Outage'}
-                    size='tiny'
-                    inverted
-                  />
-                </Segment>
-              )}
+              {this.state.urls.map(url => (
+                  <Segment key={url.id}><a href={url.url} target='_blank'>{url.name}</a>
+                      <Popup
+                          trigger={<Icon name={(url.isSuccess) ? 'check' : 'x'} size='large' color={(url.isSuccess) ? 'green' : 'red'} />}
+                          content={url.isSuccess ? 'Operational' : 'Outage'}
+                          size='tiny'
+                          inverted
+                      />
+                  </Segment>
+
+              ))}
             </Segment.Group>
 
             <Label>
@@ -111,9 +106,9 @@ class App extends Component {
             <h1>System Metrics</h1>
 
             {this.state.requests && this.state.requests.map(request => (
-              <div>
+              <div key={request.id}>
                 <Header>{request.name}</Header>
-                <LineChart key={request.id} width={730} height={250} data={request.data}
+                <LineChart width={730} height={250} data={request.data}
                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" tickFormatter={(str) => '1'} />
