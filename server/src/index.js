@@ -32,7 +32,7 @@ const pg = new Knex({
     database: process.env.DB_DB,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
-    port: 5555
+    port: process.env.DB_PORT
   },
   searchPath: ['status_page'],
 });
