@@ -25,7 +25,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="">
+      <div>
 
         <Dimmer active={!this.state.requests}>
           <Loader>Loading</Loader>
@@ -50,7 +50,7 @@ class App extends Component {
               <OperationMessage operationStatus={this.state.operationStatus} />
               <br/>
               <ListUrls urls={this.state.urls} />
-              <SystemMetrics requests={this.state.requests} />
+              <SystemMetrics requests={this.state.requests} fetchRequests={fetchRequests} ctx={this} />
             </Container>
 
           </div>

@@ -163,12 +163,25 @@ app.get('/api/requests', (req, res) => {
       }
       if(req.query.days) {
 
-        let date = moment().subtract(parseInt(req.query.days),'d').format('YYYY-MM-DD');
-        console.log(date);
-
         let col = 'requests.created_on';
-        queryBuilder.whereRaw('requests.created_on >= ? ::date', date);
-        queryBuilder.where(pg.raw(`(SELECT date_part( ? , ${col}) = '00')`, ['minute']))
+        let date;
+        let today = moment().format('YYYY-MM-DD');
+
+        if(req.query.days == 1) {
+          queryBuilder.whereRaw('requests.created_on::DATE = ? ', today);
+          queryBuilder.where(pg.raw(`(SELECT date_part( ? , ${col}) = '00')`, ['minute']))
+        }
+
+        if(req.query.days != 1) {
+          date = moment().subtract(parseInt(req.query.days),'d').format('YYYY-MM-DD');
+          queryBuilder.whereRaw('requests.created_on::DATE >= ? ', date);
+          queryBuilder.whereRaw('requests.created_on::DATE < ? ', today);
+
+
+          queryBuilder.where(pg.raw(`(SELECT date_part( ? , ${col}) = '18')`, ['hour']));
+          queryBuilder.where(pg.raw(`(SELECT date_part( ? , ${col}) = '00')`, ['minute']));
+        }
+
       }
     }))
     .then(rsSet => {
